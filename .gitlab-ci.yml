@@ -15,16 +15,19 @@ test:
 
 build:
   stage: build
-  image: gitlab/dind
+  image: docker:latest
   services:
   - docker:dind
+  before_script: 
+    - docker login -u _json_key --password-stdin $REGISTRY_HOST < $GCP_SA_DEPLOYER
   script:
-    - docker build -t registry.gitlab.com/d2985/marvel-server-node .
+    - docker pull $REGISTRY_IMAGE:latest || true
+    - docker build --cache-from $REGISTRY_IMAGE:latest --tag $REGISTRY_IMAGE:latest .
 
 deploy:
   stage: deploy
-  image: gitlab/dind
+  image: docker:latest
   services:
   - docker:dind
   script:
-    - docker push registry.gitlab.com/d2985/marvel-server-node
+    - docker push $REGISTRY_IMAGE:latest
