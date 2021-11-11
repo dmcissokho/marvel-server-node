@@ -25,13 +25,4 @@ describe("Characters API tests", () => {
         done();
       });
   });
-  it("Response should be a json", done => {
-    chai
-      .request(app)
-      .get("/api/v1/characters")
-      .end((err, res) => {
-        res.should.be.json;
-        done();
-      });
-  });
 });
