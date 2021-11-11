@@ -1,0 +1,25 @@
+stages:
+  - test
+  - build
+  - deploy
+
+image: node:14.17.0
+
+before_script:
+- npm install
+
+test:
+  stage: test
+  script:
+  - npm run test
+
+build:
+  stage: build
+  script:
+  - npm run build
+
+deploy:
+  stage: deploy
+  script:
+    - docker build -t registry.gitlab.com/d2985/marvel-server-node .
+    - docker push registry.gitlab.com/d2985/marvel-server-node
