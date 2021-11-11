@@ -5,6 +5,8 @@ stages:
 
 image: node:14.17.0
 
+
+
 before_script:
 - npm install
 
@@ -15,6 +17,9 @@ test:
 
 build:
   stage: build
+  only:
+    - tags
+    - main
   image: docker:latest
   services:
   - docker:dind
@@ -26,6 +31,9 @@ build:
 
 deploy:
   stage: deploy
+  only:
+    - tags
+    - main
   image: docker:latest
   services:
   - docker:dind
