@@ -1,5 +1,6 @@
 stages:
   - test
+  - build
   - deploy
 
 image: node:14.17.0
@@ -12,8 +13,18 @@ test:
   script:
   - npm run test
 
-deploy:
-  stage: deploy
+build:
+  stage: build
+  image: gitlab/dind
+  services:
+  - docker:dind
   script:
     - docker build -t registry.gitlab.com/d2985/marvel-server-node .
+
+deploy:
+  stage: deploy
+  image: gitlab/dind
+  services:
+  - docker:dind
+  script:
     - docker push registry.gitlab.com/d2985/marvel-server-node
