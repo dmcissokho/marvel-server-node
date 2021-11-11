@@ -1,0 +1,41 @@
+stages:
+  - test
+  - build
+  - deploy
+
+image: node:14.17.0
+
+
+
+before_script:
+- npm install
+
+test:
+  stage: test
+  script:
+  - npm run test
+
+build:
+  stage: build
+  only:
+    - tags
+    - main
+  image: docker:latest
+  services:
+  - docker:dind
+  before_script: 
+    - docker login -u _json_key --password-stdin $REGISTRY_HOST < $GCP_SA_DEPLOYER
+  script:
+    - docker pull $REGISTRY_IMAGE:latest || true
+    - docker build --cache-from $REGISTRY_IMAGE:latest --tag $REGISTRY_IMAGE:latest .
+
+deploy:
+  stage: deploy
+  only:
+    - tags
+    - main
+  image: docker:latest
+  services:
+  - docker:dind
+  script:
+    - docker push $REGISTRY_IMAGE:latest
